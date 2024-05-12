@@ -17,7 +17,7 @@ print(response1.url)
 print(response2.url)
 print(response3.url)
 
-#Задание 7: Запросы и методы
+#Задание 7: Надо написать скрипт, который делает следующее:
 #1. Делает http-запрос любого типа без параметра method, описать что будет выводиться в этом случае.
 response = requests.get("https://playground.learnqa.ru/ajax/api/compare_query_type")
 print((f"1. method GET with no parameter has following response: {response.text}"))
