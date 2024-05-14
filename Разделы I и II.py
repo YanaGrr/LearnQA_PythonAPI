@@ -87,6 +87,6 @@ if status1 == "Job is NOT ready":
     if status2 == "Job is ready" and result is not None:
         print("Good job!")
     else:
-            print("Try again")
+        print("Try again")
 else:
     print("Try again")
