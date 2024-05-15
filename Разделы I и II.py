@@ -89,4 +89,60 @@ if status1 == "Job is NOT ready":
     else:
         print("Try again")
 else:
-    print("Try again")
+    print("Try again");
+
+#Задание 9:  написать скрипт, который должен:
+#1. Брать очередной пароль и вместе с логином коллеги вызывать первый метод get_secret_password_homework. В ответ метод будет возвращать авторизационную cookie с именем auth_cookie и каким-то значением.
+#2. Далее эту cookie мы должна передать во второй метод check_auth_cookie. Если в ответ вернулась фраза "You are NOT authorized", значит пароль неправильный. В этом случае берем следующий пароль и все заново. Если же вернулась другая фраза - нужно, чтобы программа вывела верный пароль и эту фразу.
+payload = [{"login": "super_admin", "password": "password"}, {"login": "super_admin", "password": "123456"},
+           {"login": "super_admin", "password": "12345678"}, {"login": "super_admin", "password": "qwerty"},
+           {"login": "super_admin", "password": "abc123"}, {"login": "super_admin", "password": "monkey"},
+           {"login": "super_admin", "password": "1234567"}, {"login": "super_admin", "password": "letmein"},
+           {"login": "super_admin", "password": "trustno1"}, {"login": "super_admin", "password": "dragon"},
+           {"login": "super_admin", "password": "baseball"}, {"login": "super_admin", "password": "111111"},
+           {"login": "super_admin", "password": "iloveyou"}, {"login": "super_admin", "password": "master"},
+           {"login": "super_admin", "password": "sunshine"}, {"login": "super_admin", "password": "ashley"},
+           {"login": "super_admin", "password": "bailey"}, {"login": "super_admin", "password": "passw0rd"},
+           {"login": "super_admin", "password": "shadow"}, {"login": "super_admin", "password": "123123"},
+           {"login": "super_admin", "password": "654321"}, {"login": "super_admin", "password": "superman"},
+           {"login": "super_admin", "password": "qazwsx"}, {"login": "super_admin", "password": "michael"},
+           {"login": "super_admin", "password": "Football"}, {"login": "super_admin", "password": "welcome"},
+           {"login": "super_admin", "password": "jesus"}, {"login": "super_admin", "password": "ninja"},
+           {"login": "super_admin", "password": "mustang"}, {"login": "super_admin", "password": "password1"},
+           {"login": "super_admin", "password": "123456789"}, {"login": "super_admin", "password": "adobe123[a]"},
+           {"login": "super_admin", "password": "admin"}, {"login": "super_admin", "password": "1234567890"},
+           {"login": "super_admin", "password": "photoshop[a]"}, {"login": "super_admin", "password": "1234"},
+           {"login": "super_admin", "password": "12345"}, {"login": "super_admin", "password": "princess"},
+           {"login": "super_admin", "password": "azerty"}, {"login": "super_admin", "password": "000000"},
+           {"login": "super_admin", "password": "access"}, {"login": "super_admin", "password": "696969"},
+           {"login": "super_admin", "password": "batman"}, {"login": "super_admin", "password": "1qaz2wsx"},
+           {"login": "super_admin", "password": "login"}, {"login": "super_admin", "password": "qwertyuiop"},
+           {"login": "super_admin", "password": "solo"}, {"login": "super_admin", "password": "starwars"},
+           {"login": "super_admin", "password": "121212"}, {"login": "super_admin", "password": "flower"},
+           {"login": "super_admin", "password": "hottie"}, {"login": "super_admin", "password": "loveme"},
+           {"login": "super_admin", "password": "zaq1zaq1"}, {"login": "super_admin", "password": "hello"},
+           {"login": "super_admin", "password": "freedom"}, {"login": "super_admin", "password": "whatever"},
+           {"login": "super_admin", "password": "666666"}, {"login": "super_admin", "password": "!@#$%^&*"},
+           {"login": "super_admin", "password": "charlie"}, {"login": "super_admin", "password": "aa123456"},
+           {"login": "super_admin", "password": "donald"}, {"login": "super_admin", "password": "qwerty123"},
+           {"login": "super_admin", "password": "1q2w3e4r"}, {"login": "super_admin", "password": "555555"},
+           {"login": "super_admin", "password": "lovely"}, {"login": "super_admin", "password": "7777777"},
+           {"login": "super_admin", "password": "888888"}, {"login": "super_admin", "password": "123qwe"}]
+
+for i in range(len(payload)):
+
+    response = requests.post("https://playground.learnqa.ru/ajax/api/get_secret_password_homework", data=payload[i])
+
+    cookie_value = response.cookies.get('auth_cookie')
+
+    cookies = {}
+    if cookie_value is not None:
+        cookies.update({'auth_cookie':cookie_value})
+
+    response1 = requests.post(" https://playground.learnqa.ru/ajax/api/check_auth_cookie", cookies=cookies)
+
+    if response1.text != 'You are NOT authorized':
+        print("Correct password:", payload[i].get("password"), ";", "Response:", response1.text)
+        break
+    else:
+        continue
