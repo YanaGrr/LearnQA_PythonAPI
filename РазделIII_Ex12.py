@@ -28,7 +28,7 @@ class Test_Headers:
         value8 = "max-age=0"
         #value9 = "Tue, 21 May 2024 19:12:39 GMT"
 
-        assert len(headers_content) == 9, "Count of headers are not equal 9"
+        assert len(headers_content) == 9, "Count of headers is not equal 9"
 
         assert key1 in headers_content, "There is no header's key1 in the response"
         assert key2 in headers_content, "There is no header's key2 in the response"
