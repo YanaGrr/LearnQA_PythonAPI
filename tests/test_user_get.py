@@ -1,0 +1,58 @@
+import requests
+from lib.base_case import BaseCase
+from lib.assertions import Assertions
+
+
+class TestUserGet(BaseCase):
+    # неавторизованный запрос на данные - получаем только username
+    def test_get_user_details_not_auth(self):
+        response = requests.get("https://playground.learnqa.ru/api/user/2")
+
+        Assertions.assert_json_has_key(response, "username")
+        Assertions.assert_json_has_not_key(response, "email")
+        Assertions.assert_json_has_not_key(response, "firstName")
+        Assertions.assert_json_has_not_key(response, "lastName")
+
+    # авторизованный запрос - авторизация пользователем с ID 2 и запрос для получения данных того же пользователя, получаем все поля
+    def test_get_user_details_auth_as_same_user(self):
+        data = {
+            'email': 'vinkotov@example.com',
+            'password': '1234'
+        }
+        response1 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
+
+        self.auth_sid = self.get_cookie(response1, "auth_sid")
+        self.token = self.get_header(response1, "x-csrf-token")
+        self.user_id_from_auth_method = self.get_json_value(response1, "user_id")
+
+        response2 = requests.get(
+            f"https://playground.learnqa.ru/api/user/{self.user_id_from_auth_method}",
+            headers={"x-csrf-token": self.token},
+            cookies={"auth_sid": self.auth_sid}
+        )
+
+        expected_fields = ["username", "email", "firstName", "lastName"]
+        Assertions.assert_json_has_keys(response2, expected_fields)
+
+    # авторизация под одним пользователем, но получение данных другого (т.е. с другим ID)
+    # в этом случае запрос также получает только username, так как не должны видеть остальные данные чужого пользователя
+    def test_get_user_details_auth_as_other_user(self):
+        data = {
+            'email': 'example_email@example.com',
+            'password': '1234'
+        }
+        response1 = requests.post("https://playground.learnqa.ru/api/user/login", data=data)
+
+        self.auth_sid = self.get_cookie(response1, "auth_sid")
+        self.token = self.get_header(response1, "x-csrf-token")
+
+        response2 = requests.get(
+            f"https://playground.learnqa.ru/api/user/2",
+            headers={"x-csrf-token": self.token},
+            cookies={"auth_sid": self.auth_sid}
+        )
+
+        Assertions.assert_json_has_key(response2, "username")
+        Assertions.assert_json_has_not_key(response2, "email")
+        Assertions.assert_json_has_not_key(response2, "firstName")
+        Assertions.assert_json_has_not_key(response2, "lastName")
