@@ -3,9 +3,14 @@ import pytest
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from lib.my_requests import MyRequests
+import allure
 
 
+@allure.epic("Registration cases")
 class TestUserRegister(BaseCase):
+    @allure.description("This test successfully registers user")
+    @allure.story("Positive test")
+    @allure.severity(allure.severity_level.BLOCKER)
     def test_create_user_successfully(self):
         data = self.prepare_registration_data()
         response = MyRequests.post("/user/", data=data)
@@ -13,6 +18,9 @@ class TestUserRegister(BaseCase):
         Assertions.assert_code_status(response, 200)
         Assertions.assert_json_has_key(response, "id")
 
+    @allure.description("This test checks, that registration with existing email is forbidden")
+    @allure.story("Negative test")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_create_user_with_existing_email(self):
         email = 'vinkotov@example.com'
         data = self.prepare_registration_data(email)
@@ -24,6 +32,9 @@ class TestUserRegister(BaseCase):
             "utf-8") == f"Users with email '{email}' already exists", f"Unexpected response content {response.content}"
 
     # Создание пользователя с некорректным email - без символа @
+    @allure.description("This test checks, that registration with wrong email is forbidden")
+    @allure.story("Negative test")
+    @allure.severity(allure.severity_level.NORMAL)
     def test_create_user_without_simbol(self):
         email = 'vinkotovexample.com'
         data = {
@@ -41,7 +52,6 @@ class TestUserRegister(BaseCase):
             "utf-8") == f"Invalid email format", f"Unexpected response content {response.content}"
 
     # Создание пользователя без указания одного из полей - с помощью @parametrize необходимо проверить, что отсутствие любого параметра не дает зарегистрировать пользователя
-
     @pytest.mark.parametrize(
         "key, value",
         [
@@ -87,6 +97,9 @@ class TestUserRegister(BaseCase):
             )
         ]
     )
+    @allure.description("This test checks, that registration without data is forbidden")
+    @allure.story("Negative test")
+    @allure.severity(allure.severity_level.BLOCKER)
     def test_create_user_without_data(self, key, value):
         response = MyRequests.post("/user/", data=value)
 
@@ -95,6 +108,9 @@ class TestUserRegister(BaseCase):
             "utf-8") == f"The following required params are missed: {key}", f"Unexpected response content {response.content}"
 
     # Создание пользователя с очень коротким именем в один символ
+    @allure.description("This test checks, that registration with short username is forbidden")
+    @allure.story("Negative test")
+    @allure.severity(allure.severity_level.NORMAL)
     def test_create_user_without_simbol(self):
         username = '1'
         data = {
@@ -112,6 +128,9 @@ class TestUserRegister(BaseCase):
             "utf-8") == f"The value of 'username' field is too short", f"Unexpected response content {response.content}"
 
     # Создание пользователя с очень длинным именем - длиннее 250 символов
+    @allure.description("This test checks, that registration with long username is forbidden")
+    @allure.story("Negative test")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_create_user_without_simbol(self):
         username = 'learnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqalearnqa'
         data = {

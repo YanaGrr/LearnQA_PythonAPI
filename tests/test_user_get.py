@@ -1,10 +1,15 @@
 from lib.base_case import BaseCase
 from lib.assertions import Assertions
 from lib.my_requests import MyRequests
+import allure
 
 
+@allure.epic("Get user's data cases")
 class TestUserGet(BaseCase):
     # неавторизованный запрос на данные - получаем только username
+    @allure.description("This test checks getting user's data w/o sending auth cookie or token is forbidden")
+    @allure.story("Negative test")
+    @allure.severity(allure.severity_level.CRITICAL)
     def test_get_user_details_not_auth(self):
         response = MyRequests.get("/user/2")
 
@@ -14,6 +19,9 @@ class TestUserGet(BaseCase):
         Assertions.assert_json_has_not_key(response, "lastName")
 
     # авторизованный запрос - авторизация пользователем с ID 2 и запрос для получения данных того же пользователя, получаем все поля
+    @allure.description("This test successfully getting data")
+    @allure.story("Positive test")
+    @allure.severity(allure.severity_level.BLOCKER)
     def test_get_user_details_auth_as_same_user(self):
         data = {
             'email': 'vinkotov@example.com',
@@ -36,6 +44,9 @@ class TestUserGet(BaseCase):
 
     # авторизация под одним пользователем, но получение данных другого (т.е. с другим ID)
     # в этом случае запрос также получает только username, так как не должны видеть остальные данные чужого пользователя
+    @allure.description("This test checks, that getting data of another user's account is forbidden")
+    @allure.story("Negative test")
+    @allure.severity(allure.severity_level.BLOCKER)
     def test_get_user_details_auth_as_other_user(self):
         data = {
             'email': 'example_email@example.com',
